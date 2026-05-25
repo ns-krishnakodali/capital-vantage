@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #030305;
+  --foreground: #f4f4f5;
+  --obsidian-50: #f4f4f5;
+  --obsidian-100: #e4e4e7;
+  --obsidian-200: #d4d4d8;
+  --obsidian-800: #15151a;
+  --obsidian-900: #0a0a0f;
+  --obsidian-950: #030305;
+  --panel-border: rgba(255, 255, 255, 0.04);
+  --panel-border-hover: rgba(16, 185, 129, 0.12);
+  --panel-shadow: 0 4px 30px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --panel-shadow-hover:
+    0 4px 40px rgba(16, 185, 129, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --ambient-emerald: rgba(16, 185, 129, 0.08);
+  --ambient-indigo: rgba(99, 102, 241, 0.08);
+  --ambient-violet: rgba(139, 92, 246, 0.04);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-obsidian-50: var(--obsidian-50);
+  --color-obsidian-100: var(--obsidian-100);
+  --color-obsidian-200: var(--obsidian-200);
+  --color-obsidian-800: var(--obsidian-800);
+  --color-obsidian-900: var(--obsidian-900);
+  --color-obsidian-950: var(--obsidian-950);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, var(--ambient-emerald) 0, transparent 50%),
+    radial-gradient(at 100% 100%, var(--ambient-indigo) 0, transparent 50%),
+    radial-gradient(at 50% 0%, var(--ambient-violet) 0, transparent 40%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  font-feature-settings:
+    "tnum" on,
+    "lnum" on;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  background-color: transparent;
+}
+
+.bg-grid-mesh {
+  background-size: 50px 50px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+}
+
+.premium-panel {
+  background: linear-gradient(135deg, rgba(15, 15, 22, 0.65) 0%, rgba(8, 8, 12, 0.85) 100%);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(20px);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.premium-panel:hover {
+  border-color: var(--panel-border-hover);
+  box-shadow: var(--panel-shadow-hover);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.04);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.04);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-fast {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.03);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes onboarding-step-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboarding-step-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+}
+
+.onboarding-step-enter {
+  animation: onboarding-step-enter 300ms ease-out 100ms both;
+}
+
+.onboarding-step-leave {
+  animation: onboarding-step-leave 200ms ease-in forwards;
 }
