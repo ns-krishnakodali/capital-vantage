@@ -5,9 +5,16 @@ import { useRouter } from "next/navigation";
 
 import { AmbientBackdrop } from "@/components";
 import { EMAIL_PATTERN, ENTER_DURATION_MS, LEAVE_DURATION_MS } from "@/constants";
-import { AccountDetails, AiConfiguration, OnboardingHeader, StartConfiguration } from "@/modules";
+import { apiClient, ApiError } from "@/lib";
+import { AccountDetails, AIConfiguration, OnboardingHeader, StartConfiguration } from "@/modules";
 
-import type { OnboardingFormState, OnboardingStep } from "@/types";
+import type {
+  ApiMessageResponse,
+  OnboardingFormState,
+  OnboardingStep,
+  UserConfig,
+  UpsertUserConfigPayload,
+} from "@/types";
 
 type TransitionPhase = "entering" | "idle" | "leaving";
 
@@ -20,6 +27,8 @@ const OnboardingPage = () => {
   const [step, setStep] = useState<OnboardingStep>(1);
   const [renderedStep, setRenderedStep] = useState<OnboardingStep>(1);
   const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>("idle");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<OnboardingFormState>({
     email: "",
     model: "frontier",
@@ -41,6 +50,7 @@ const OnboardingPage = () => {
   const canContinueFromDetails = formState.name.trim() !== "" && isEmailValid;
 
   const updateField = (field: "name" | "email", value: string) => {
+    setSubmitError(null);
     setFormState((currentValue) => ({
       ...currentValue,
       [field]: value,
@@ -48,6 +58,7 @@ const OnboardingPage = () => {
   };
 
   const updateModel = (model: OnboardingFormState["model"]) => {
+    setSubmitError(null);
     setFormState((currentValue) => ({
       ...currentValue,
       model,
@@ -55,10 +66,11 @@ const OnboardingPage = () => {
   };
 
   const goToStep = (nextStep: OnboardingStep) => {
-    if (nextStep === step || transitionPhase !== "idle") {
+    if (nextStep === step || transitionPhase !== "idle" || isSubmitting) {
       return;
     }
 
+    setSubmitError(null);
     setStep(nextStep);
     setTransitionPhase("leaving");
 
@@ -72,8 +84,31 @@ const OnboardingPage = () => {
     }, LEAVE_DURATION_MS);
   };
 
-  const handleComplete = () => {
-    router.replace("/");
+  const handleComplete = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const payload: UpsertUserConfigPayload = {
+        aiModel: formState.model,
+        email: formState.email,
+        name: formState.name,
+      };
+
+      await apiClient.put<UserConfig>("/api/user-config", payload);
+      router.replace("/dashboard");
+    } catch (err) {
+      console.error("Failed to save user configuration.", err);
+
+      if (err instanceof ApiError) {
+        const errorData = err.data as ApiMessageResponse | undefined;
+        setSubmitError(errorData?.message ?? err.message);
+      } else {
+        setSubmitError("Unable to save your configuration right now.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const stepTransitionClass =
@@ -104,8 +139,10 @@ const OnboardingPage = () => {
                 />
               )}
               {renderedStep === 3 && (
-                <AiConfiguration
+                <AIConfiguration
                   selectedModel={formState.model}
+                  isSubmitting={isSubmitting}
+                  errorMessage={submitError ?? undefined}
                   onBack={() => goToStep(2)}
                   onComplete={handleComplete}
                   onSelect={updateModel}

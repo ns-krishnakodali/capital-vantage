@@ -5,3 +5,17 @@ export type OnboardingFormState = {
   model: "frontier" | "local";
   name: string;
 };
+
+export type UserConfigModel = OnboardingFormState["model"];
+
+export type UpsertUserConfigPayload = {
+  aiModel: UserConfigModel;
+  email: string;
+  name: string;
+};
+
+export type UserConfig = UpsertUserConfigPayload;
+
+export type ApiMessageResponse = {
+  message: string;
+};

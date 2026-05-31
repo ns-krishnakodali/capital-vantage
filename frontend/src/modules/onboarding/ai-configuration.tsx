@@ -1,14 +1,18 @@
-import { BrainCircuit, Check, Cpu } from "lucide-react";
+import { BrainCircuit, Check, Cpu, LoaderCircle } from "lucide-react";
 
 type AiConfigurationProps = {
   selectedModel: "frontier" | "local";
+  isSubmitting: boolean;
+  errorMessage?: string;
   onBack: () => void;
   onComplete: () => void;
   onSelect: (model: "frontier" | "local") => void;
 };
 
-export const AiConfiguration = ({
+export const AIConfiguration = ({
   selectedModel,
+  isSubmitting,
+  errorMessage,
   onBack,
   onComplete,
   onSelect,
@@ -24,12 +28,13 @@ export const AiConfiguration = ({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <button
           type="button"
+          disabled={isSubmitting}
           onClick={() => onSelect("frontier")}
-          className={`premium-panel flex h-44 flex-col justify-between rounded-2xl p-5 text-left transition-all duration-200 hover:border-emerald-500/20 ${
+          className={`premium-panel flex h-44 flex-col justify-between rounded-2xl p-5 text-left transition-all duration-200 ${
             selectedModel === "frontier"
               ? "border-emerald-500/60 bg-emerald-500/2 shadow-md"
               : "border-white/5 bg-transparent"
-          }`}
+          } ${isSubmitting ? "cursor-not-allowed opacity-60" : "hover:border-emerald-500/20"}`}
         >
           <div className="flex items-start justify-between">
             <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
@@ -57,12 +62,13 @@ export const AiConfiguration = ({
         </button>
         <button
           type="button"
+          disabled={isSubmitting}
           onClick={() => onSelect("local")}
-          className={`premium-panel flex h-44 flex-col justify-between rounded-2xl p-5 text-left transition-all duration-200 hover:border-emerald-500/20 ${
+          className={`premium-panel flex h-44 flex-col justify-between rounded-2xl p-5 text-left transition-all duration-200 ${
             selectedModel === "local"
               ? "border-emerald-500/60 bg-emerald-500/2 shadow-md"
               : "border-white/5 bg-transparent"
-          }`}
+          } ${isSubmitting ? "cursor-not-allowed opacity-60" : "hover:border-emerald-500/20"}`}
         >
           <div className="flex items-start justify-between">
             <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-400">
@@ -91,23 +97,39 @@ export const AiConfiguration = ({
       <div className="flex gap-3 pt-4">
         <button
           type="button"
+          disabled={isSubmitting}
           onClick={onBack}
-          className="w-1/2 cursor-pointer rounded-lg border border-white/10 bg-zinc-900 px-4 py-3 text-center text-[11px] font-medium normal-case tracking-wide
-            text-zinc-300 transition duration-200 hover:border-white/20 hover:bg-zinc-800 hover:text-white active:scale-95"
+          className={`w-1/2 rounded-lg border border-white/10 bg-zinc-900 px-4 py-3 text-center text-[11px] font-medium normal-case tracking-wide
+            text-zinc-300 transition duration-200 ${
+              isSubmitting
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer hover:border-white/20 hover:bg-zinc-800 hover:text-white active:scale-95"
+            }`}
         >
           Back
         </button>
         <button
           type="button"
+          disabled={isSubmitting}
           onClick={onComplete}
-          className="flex w-1/2 cursor-pointer items-center justify-center gap-2 rounded-lg bg-linear-to-r from-emerald-500 to-teal-600 px-4 py-3 text-[11px]
-            font-medium normal-case tracking-wide text-black shadow-lg shadow-emerald-500/20 transition duration-200 hover:from-emerald-600 hover:to-teal-700
-            active:scale-95"
+          className={`flex w-1/2 items-center justify-center gap-2 rounded-lg bg-linear-to-r from-emerald-500 to-teal-600 px-4 py-3 text-[11px]
+            font-medium normal-case tracking-wide text-black shadow-lg shadow-emerald-500/20 transition duration-200 ${
+              isSubmitting
+                ? "cursor-wait opacity-70"
+                : "cursor-pointer hover:from-emerald-600 hover:to-teal-700 active:scale-95"
+            }`}
         >
-          <span>Launch Workspace</span>
-          <Check className="h-4 w-4" strokeWidth={2.5} />
+          <span>{isSubmitting ? "Saving Configuration" : "Launch Workspace"}</span>
+          {isSubmitting ? (
+            <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2.5} />
+          ) : (
+            <Check className="h-4 w-4" strokeWidth={2.5} />
+          )}
         </button>
       </div>
+      <p className="min-h-4 font-mono text-[10px] tracking-wide text-amber-400">
+        {errorMessage ?? ""}
+      </p>
     </div>
   );
 };
