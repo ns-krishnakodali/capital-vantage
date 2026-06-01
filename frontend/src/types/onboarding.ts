@@ -16,6 +16,10 @@ export type UpsertUserConfigPayload = {
 
 export type UserConfig = UpsertUserConfigPayload;
 
+export type UserName = {
+  name: string;
+};
+
 export type ApiMessageResponse = {
   message: string;
 };

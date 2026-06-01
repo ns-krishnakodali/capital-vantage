@@ -2,6 +2,7 @@ package com.capitalvantage.backend.service;
 
 import com.capitalvantage.backend.dto.request.UpsertUserConfigRequest;
 import com.capitalvantage.backend.dto.response.UserConfigResponse;
+import com.capitalvantage.backend.dto.response.UserNameResponse;
 import com.capitalvantage.backend.exception.InvalidUserConfigException;
 import com.capitalvantage.backend.exception.UserConfigIntegrityException;
 import com.capitalvantage.backend.exception.UserConfigNotFoundException;
@@ -21,18 +22,13 @@ public class UserConfigService {
     }
 
     public UserConfigResponse getUserConfig() {
-        long count = userConfigRepository.count();
-        if (count == 0) {
-            throw new UserConfigNotFoundException("User configuration not found.");
-        }
-        if (count > 1) {
-            throw new UserConfigIntegrityException("Multiple user configuration rows found.");
-        }
-
-        UserConfig userConfig = userConfigRepository.findById(USER_CONFIG_ID)
-                .orElseThrow(() -> new UserConfigIntegrityException("User configuration must use the fixed ID 1."));
-
+        UserConfig userConfig = getExistingUserConfig();
         return toResponse(userConfig);
+    }
+
+    public UserNameResponse getUserName() {
+        UserConfig userConfig = getExistingUserConfig();
+        return new UserNameResponse(userConfig.getName());
     }
 
     public UserConfigResponse upsertUserConfig(UpsertUserConfigRequest request) {
@@ -59,6 +55,20 @@ public class UserConfigService {
 
         UserConfig savedUserConfig = userConfigRepository.save(userConfig);
         return toResponse(savedUserConfig);
+    }
+
+    private UserConfig getExistingUserConfig() {
+        long count = userConfigRepository.count();
+        if (count == 0) {
+            throw new UserConfigNotFoundException("User configuration not found.");
+        }
+        if (count > 1) {
+            throw new UserConfigIntegrityException("Multiple user configuration rows found.");
+        }
+
+        UserConfig userConfig = userConfigRepository.findById(USER_CONFIG_ID)
+                .orElseThrow(() -> new UserConfigIntegrityException("User configuration must use the fixed ID 1."));
+        return userConfig;
     }
 
     private UserConfigResponse toResponse(UserConfig userConfig) {

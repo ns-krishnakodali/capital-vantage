@@ -2,6 +2,7 @@ package com.capitalvantage.backend.controller;
 
 import com.capitalvantage.backend.dto.request.UpsertUserConfigRequest;
 import com.capitalvantage.backend.dto.response.UserConfigResponse;
+import com.capitalvantage.backend.dto.response.UserNameResponse;
 import com.capitalvantage.backend.service.UserConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,11 @@ public class UserConfigController {
     @GetMapping
     public ResponseEntity<UserConfigResponse> getUserConfig() {
         return ResponseEntity.ok(userConfigService.getUserConfig());
+    }
+
+    @GetMapping("/name")
+    public ResponseEntity<UserNameResponse> getUserName() {
+        return ResponseEntity.ok(userConfigService.getUserName());
     }
 
     @PutMapping

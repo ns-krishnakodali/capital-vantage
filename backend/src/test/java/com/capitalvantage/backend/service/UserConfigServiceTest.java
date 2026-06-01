@@ -2,6 +2,7 @@ package com.capitalvantage.backend.service;
 
 import com.capitalvantage.backend.dto.request.UpsertUserConfigRequest;
 import com.capitalvantage.backend.dto.response.UserConfigResponse;
+import com.capitalvantage.backend.dto.response.UserNameResponse;
 import com.capitalvantage.backend.exception.InvalidUserConfigException;
 import com.capitalvantage.backend.exception.UserConfigIntegrityException;
 import com.capitalvantage.backend.exception.UserConfigNotFoundException;
@@ -31,6 +32,16 @@ class UserConfigServiceTest {
         assertEquals("Jane Doe", response.name());
         assertEquals("jane@example.com", response.email());
         assertEquals("gpt-4.1", response.aiModel());
+    }
+
+    @Test
+    void shouldReturnUserName() {
+        stubUserConfigRepository.count = 1L;
+        stubUserConfigRepository.findByIdResult = Optional.of(new UserConfig(1, "Jane Doe", "jane@example.com", "gpt-4.1"));
+
+        UserNameResponse response = userConfigService.getUserName();
+
+        assertEquals("Jane Doe", response.name());
     }
 
     @Test

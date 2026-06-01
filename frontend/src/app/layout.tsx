@@ -21,11 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en" className={`${inter.variable} ${jetBrainsMono.variable} h-full antialiased`}>
       <body suppressHydrationWarning className="min-h-full">
@@ -33,4 +29,6 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

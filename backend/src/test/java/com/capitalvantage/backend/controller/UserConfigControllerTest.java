@@ -2,6 +2,7 @@ package com.capitalvantage.backend.controller;
 
 import com.capitalvantage.backend.dto.request.UpsertUserConfigRequest;
 import com.capitalvantage.backend.dto.response.UserConfigResponse;
+import com.capitalvantage.backend.dto.response.UserNameResponse;
 import com.capitalvantage.backend.exception.GlobalExceptionHandler;
 import com.capitalvantage.backend.exception.UserConfigNotFoundException;
 import com.capitalvantage.backend.service.UserConfigService;
@@ -44,6 +45,16 @@ class UserConfigControllerTest {
     }
 
     @Test
+    void shouldReturnUserName() throws Exception {
+        userConfigService.nameResponse = new UserNameResponse("Jane Doe");
+
+        mockMvc.perform(get("/api/user-config/name"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value("Jane Doe"));
+    }
+
+    @Test
     void shouldReturnNotFoundWhenUserConfigDoesNotExist() throws Exception {
         userConfigService.getException = new UserConfigNotFoundException("User configuration not found.");
 
@@ -78,6 +89,7 @@ class UserConfigControllerTest {
 
     private static class StubUserConfigService extends UserConfigService {
         private UserConfigResponse getResponse;
+        private UserNameResponse nameResponse;
         private RuntimeException getException;
         private UserConfigResponse putResponse;
         private RuntimeException putException;
@@ -93,6 +105,14 @@ class UserConfigControllerTest {
                 throw getException;
             }
             return getResponse;
+        }
+
+        @Override
+        public UserNameResponse getUserName() {
+            if (getException != null) {
+                throw getException;
+            }
+            return nameResponse;
         }
 
         @Override
