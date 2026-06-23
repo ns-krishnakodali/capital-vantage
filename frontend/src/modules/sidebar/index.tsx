@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   CalendarDays,
@@ -37,6 +37,13 @@ type NavigationItem = {
   icon: LucideIcon;
   id: string;
   label: string;
+};
+
+type SidebarNavigationItemProps = {
+  expanded: boolean;
+  item: NavigationItem;
+  onNavigate?: () => void;
+  pathname: string;
 };
 
 const navigationItems: NavigationItem[] = [
@@ -96,11 +103,20 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
-type SidebarNavigationItemProps = {
-  expanded: boolean;
-  item: NavigationItem;
-  onNavigate?: () => void;
-  pathname: string;
+const getInitials = (name: string) => {
+  const trimmedName = name.trim();
+
+  if (trimmedName === "") {
+    return "CV";
+  }
+
+  const initials = trimmedName
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+
+  return initials || "CV";
 };
 
 const SidebarNavigationItem = ({
@@ -116,7 +132,7 @@ const SidebarNavigationItem = ({
     isActive
       ? "border-l-2 border-emerald-500 bg-white/[0.04] text-white shadow-sm"
       : item.href
-        ? "text-zinc-400 hover:bg-white/[0.01] hover:text-zinc-200"
+        ? "text-zinc-400 hover:bg-zinc-800/80 hover:text-white hover:shadow-[inset_0_0_0_1px_rgba(16,185,129,0.12)]"
         : "cursor-not-allowed text-zinc-600"
   }`;
 
@@ -274,9 +290,9 @@ const MobileNavigation = ({ onClose, pathname }: { onClose: () => void; pathname
 
             return (
               <button
+                key={item.id}
                 aria-disabled="true"
                 className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium text-zinc-600"
-                key={item.id}
                 type="button"
               >
                 <item.icon className="h-5 w-5" strokeWidth={2} />
@@ -288,22 +304,6 @@ const MobileNavigation = ({ onClose, pathname }: { onClose: () => void; pathname
       </div>
     </div>
   );
-};
-
-const getInitials = (name: string) => {
-  const trimmedName = name.trim();
-
-  if (trimmedName === "") {
-    return "CV";
-  }
-
-  const initials = trimmedName
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-
-  return initials || "CV";
 };
 
 export const SideBar = ({ children }: SideBarProps) => {

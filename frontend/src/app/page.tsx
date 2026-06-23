@@ -10,23 +10,38 @@ import { apiClient } from "@/lib";
 
 import type { UserConfig } from "@/types";
 
+const hasValidConfig = (userConfig: UserConfig) => {
+  return userConfig.name.trim() !== "" && userConfig.email.trim() !== "";
+};
+
 const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const resolveRoute = async () => {
       try {
-        const userConfig = await apiClient.get<UserConfig>("/api/user-config");
-        const hasValidConfig = userConfig.name.trim() !== "" && userConfig.email.trim() !== "";
+        const userConfig = await apiClient.get<UserConfig>("/api/user-config", {
+          signal: abortController.signal,
+        });
 
-        router.replace(hasValidConfig ? "/dashboard" : "/onboarding");
+        router.replace(hasValidConfig(userConfig) ? "/dashboard" : "/onboarding");
       } catch (err) {
+        if (abortController.signal.aborted) {
+          return;
+        }
+
         console.error("Failed to fetch user configuration.", err);
-        router.replace("/onboarding");
+        router.replace("/error");
       }
     };
 
     void resolveRoute();
+
+    return () => {
+      abortController.abort();
+    };
   }, [router]);
 
   return (
