@@ -18,7 +18,7 @@ const ErrorPage = () => {
                 <div className="relative h-12 w-12 shrink-0">
                   <Image
                     alt="Capital Vantage logo"
-                    className="scale-150 object-contain object-center"
+                    className="object-contain"
                     src="/logo.png"
                     sizes="48px"
                     fill

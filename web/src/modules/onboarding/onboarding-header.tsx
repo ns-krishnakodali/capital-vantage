@@ -20,7 +20,7 @@ export const OnboardingHeader = ({ step }: OnboardingHeaderProps) => {
               fill
               priority
               sizes="48px"
-              className="object-contain object-center scale-150"
+              className="object-contain"
             />
           </div>
           <div className="flex flex-col items-center sm:items-start">

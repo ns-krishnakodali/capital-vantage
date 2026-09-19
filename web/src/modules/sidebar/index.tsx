@@ -176,11 +176,11 @@ const SidebarNavigationItem = ({
 const SidebarLogo = ({ className, sizes }: { className: string; sizes: string }) => {
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-xl border border-white/10 bg-obsidian-950 shadow-lg shadow-emerald-500/10 ${className}`}
+      className={`relative shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg shadow-emerald-500/10 ${className}`}
     >
       <Image
         alt="Capital Vantage logo"
-        className="scale-150 object-contain object-center"
+        className="object-contain"
         fill
         priority
         sizes={sizes}
@@ -197,7 +197,7 @@ const SidebarBrand = ({ expanded, onToggle }: { expanded: boolean; onToggle: () 
     >
       <div className="relative flex min-w-0 items-center">
         <SidebarLogo
-          className={`h-9 w-9 transition-all duration-200 ease-out ${
+          className={`h-10 w-10 transition-all duration-200 ease-out ${
             expanded ? "" : "group-hover:scale-95 group-hover:opacity-0"
           }`}
           sizes="36px"
