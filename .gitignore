@@ -1,5 +1,9 @@
 .DS_Store
 .codex
 .claude
+.vscode/
 AGENTS.md
+!api/AGENTS.md
+!web/AGENTS.md
+!agents/AGENTS.md
 
